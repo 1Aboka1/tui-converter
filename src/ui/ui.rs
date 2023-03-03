@@ -4,6 +4,8 @@ use tui::{
     layout::{Layout, Constraint, Direction},
     Frame, backend::Backend, text::{Spans, Span, Text}, style::{Style, Color}, symbols::DOT
 };
+use tui_textarea::TextArea;
+use crossterm::event::{Event, read, KeyCode};
 
 pub fn draw_init<B>(f: &mut Frame<B>) -> Result<(), io::Error>
 where
@@ -69,7 +71,6 @@ where
     let mut input_string: String = String::from("");
     let lines = Text::from((&input_string).as_str());
     let p = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Input")).style(Style::default().fg(Color::Green));
-    
     f.render_widget(p, left_chunks[0]);
     Ok(())
 }
