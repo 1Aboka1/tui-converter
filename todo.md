@@ -1,0 +1,3 @@
+- [ ] Horizontal layout for "from" and "to" blocks containing lists of variants for conversion.
+- [ ] Event loop
+- [ ] Tab selection

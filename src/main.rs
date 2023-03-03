@@ -1,16 +1,17 @@
 mod ui;
-use tui_textarea::TextArea;
-use std::{io::{self, Write}, thread, time::Duration};
+mod event;
+mod tabs;
+use std::{io, thread, time::Duration};
 use tui::{
     backend::CrosstermBackend, 
     Terminal
 };
 use crossterm::{
-    event::{DisableMouseCapture, EnableMouseCapture, Event, read},
+    event::{DisableMouseCapture, EnableMouseCapture},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen}, QueueableCommand, cursor
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen}
 };
-use ui::ui::draw_init;
+use ui::draw_init;
 
 fn main() -> Result<(), io::Error> {
     start_ui()?;
@@ -30,20 +31,7 @@ fn start_ui() -> Result<(), io::Error> {
         draw_init(f).expect("Couldn't draw");
     })?;
 
-    let mut textarea = TextArea::default();
-
-    loop {
-        let widget = textarea.widget();
-        f.render_widget(widget, left_chunks[0]);
-
-        if let Event::Key(key) = read()? {
-            if key.code == KeyCode::Esc {
-                break;
-            }
-
-            textarea.input(key);
-        }
-    }
+    thread::sleep(Duration::from_millis(3000));
 
     disable_raw_mode()?;
     execute!(
