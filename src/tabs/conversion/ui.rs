@@ -12,7 +12,7 @@ where
     // Middle chunks: left for input, right for output
     let middle_chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .margin(1)
+        .margin(0)
         .constraints(
             [
                 Constraint::Percentage(50),
@@ -32,6 +32,17 @@ where
             ]
         )
         .split(middle_chunks[0]);
+
+    let left_vertical_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .margin(0)
+        .constraints(
+            [
+                Constraint::Percentage(45),
+                Constraint::Percentage(55),
+            ]
+        )
+        .split(left_chunks[1]);
     
     // Options chunks
     let options_chunks = Layout::default()
@@ -39,11 +50,12 @@ where
         .margin(1)
         .constraints(
             [
-                Constraint::Percentage(50),
-                Constraint::Percentage(50),
+                Constraint::Percentage(45),
+                Constraint::Percentage(10),
+                Constraint::Percentage(45),
             ].as_ref()
         )
-        .split(left_chunks[1]);
+        .split(left_vertical_chunks[0]);
 
     let block_left = Block::default()
         .title("Convert")
@@ -58,7 +70,7 @@ where
     // Input widget
     let mut input_string: String = String::from("");
     let lines = Text::from((&input_string).as_str());
-    let p = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Input")).style(Style::default().fg(Color::Green));
+    let p = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Input").border_type(tui::widgets::BorderType::Rounded)).style(Style::default().fg(Color::Green));
     f.render_widget(p, left_chunks[0]);
 
     // Options for the number being converted
@@ -87,7 +99,23 @@ where
         .style(Style::default().fg(Color::White))
         .highlight_style(Style::default().add_modifier(Modifier::ITALIC))
         .highlight_symbol(">>");
-    f.render_widget(list, options_chunks[1]);
+    f.render_widget(list, options_chunks[2]);
+
+    // Arrow chunks
+    let arrow_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .margin(0)
+        .constraints(
+            [
+                Constraint::Percentage(45),
+                Constraint::Percentage(10),
+                Constraint::Percentage(45),
+            ].as_ref()
+        )
+        .split(options_chunks[1]);
+    let ascii_arrow = Paragraph::new(">>---->")
+        .block(Block::default().borders(Borders::empty()));
+    f.render_widget(ascii_arrow, arrow_chunks[1]);
 
     Ok(())
 }

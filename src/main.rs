@@ -2,6 +2,7 @@ mod ui;
 mod event;
 mod tabs;
 use std::{io, thread, time::Duration};
+use event::start_event_loop;
 use tui::{
     backend::CrosstermBackend, 
     Terminal
@@ -27,11 +28,9 @@ fn start_ui() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     
-    terminal.draw(|f| {
-        draw_init(f).expect("Couldn't draw");
-    })?;
+    draw_init(&mut terminal)?;
 
-    thread::sleep(Duration::from_millis(3000));
+    start_event_loop(&terminal)?;
 
     disable_raw_mode()?;
     execute!(
