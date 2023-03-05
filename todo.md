@@ -1,7 +1,10 @@
 - [x] Horizontal layout for "from" and "to" blocks containing lists of variants for conversion.
 - [x] Event loop
 - [x] `terminal.draw(|f| ...)` should be placed inside of `draw_init` and other `draw`s
+- [x] Tab switching in event loop
 - [ ] Store all chunks in a struct OR return only required chunks from `draw_init`
 - [x] Enum for page variants
 - [ ] `impl` for pages enum that is based on tab click event
 - [ ] Do all the conversion in strings and just `!format` them
+- [ ] Implement focus
+- [ ] Check if the focus is on the input, and then check for characters inputted

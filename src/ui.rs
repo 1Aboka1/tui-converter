@@ -4,7 +4,7 @@ use tui::{
     layout::{Layout, Constraint, Direction},
     Frame, backend::Backend, text::{Spans, Span, Text}, style::{Style, Color, Modifier}, symbols::DOT, Terminal
 };
-use crate::{tabs, Pages};
+use crate::{tabs::*, Pages};
 
 pub fn draw_init<B>(terminal: &mut Terminal<B>, curr_page: &Pages) -> Result<(), io::Error>
 where
@@ -52,9 +52,9 @@ where
 
         // Here should be tab match statement(maybe)
         match curr_page {
-            Pages::Conversion => tabs::conversion::ui::draw(f, chunks).expect("Couldn't draw conversion page"),
-            Pages::Operations => tabs::operations::ui::draw(f, chunks).expect("Couldn't draw operations page"),
-            Pages::Binary => tabs::binary::ui::draw(f, chunks).expect("Couldn't draw binary page"),
+            Pages::Conversion => conversion::ui::draw(f, chunks).expect("Couldn't draw conversion page"),
+            Pages::Operations => operations::ui::draw(f, chunks).expect("Couldn't draw operations page"),
+            Pages::Binary => binary::ui::draw(f, chunks).expect("Couldn't draw binary page"),
         };
     })?;
 
