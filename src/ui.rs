@@ -4,15 +4,9 @@ use tui::{
     layout::{Layout, Constraint, Direction},
     Frame, backend::Backend, text::{Spans, Span, Text}, style::{Style, Color, Modifier}, symbols::DOT, Terminal
 };
-use crate::tabs;
+use crate::{tabs, Pages};
 
-pub enum Pages {
-    Conversion,
-    Operations,
-    Binary,
-}
-
-pub fn draw_init<B>(terminal: &mut Terminal<B>) -> Result<(), io::Error>
+pub fn draw_init<B>(terminal: &mut Terminal<B>, curr_page: &Pages) -> Result<(), io::Error>
 where
     B: Backend,
 {
@@ -40,11 +34,28 @@ where
             .style(Style::default().fg(Color::White))
             .highlight_style(Style::default().fg(Color::Red))
             .divider(DOT);
-        tabs = tabs.select(0);
+
+        use Pages::*;
+        match curr_page {
+            Conversion => {
+                tabs = tabs.select(0);
+            },
+            Operations => {
+                tabs = tabs.select(1);
+            },
+            Binary => {
+                tabs = tabs.select(2);
+            },
+        }
+
         f.render_widget(tabs, chunks[0]);
 
         // Here should be tab match statement(maybe)
-        tabs::conversion::ui::draw(f, chunks).expect("Couldn't draw conversion page");
+        match curr_page {
+            Pages::Conversion => tabs::conversion::ui::draw(f, chunks).expect("Couldn't draw conversion page"),
+            Pages::Operations => tabs::operations::ui::draw(f, chunks).expect("Couldn't draw operations page"),
+            Pages::Binary => tabs::binary::ui::draw(f, chunks).expect("Couldn't draw binary page"),
+        };
     })?;
 
     Ok(())

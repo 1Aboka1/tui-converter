@@ -4,7 +4,9 @@ use crossterm::event::{Event, KeyCode, read};
 use tui::{Terminal, backend::{CrosstermBackend, Backend}};
 use tui_textarea::TextArea;
 
-pub fn start_event_loop<B>(terminal: &Terminal<B>) -> Result<(), io::Error>
+use crate::{Pages, ui::draw_init};
+
+pub fn start_event_loop<B>(terminal: &mut Terminal<B>, curr_page: &mut Pages) -> Result<(), io::Error>
 where
     B: Backend
 {
@@ -12,8 +14,13 @@ where
 
     loop {
         if let Event::Key(key) = read()? {
-            if key.code == KeyCode::Esc {
-                break;
+            match key.code {
+                KeyCode::Esc => break,
+                KeyCode::Tab => {
+                    curr_page.toggle();
+                    draw_init(terminal, curr_page)?;
+                }
+                _ => continue,
             }
         }
     }

@@ -15,12 +15,13 @@ use crossterm::{
 use ui::draw_init;
 
 fn main() -> Result<(), io::Error> {
-    start_ui()?;
+    let mut curr_page = Pages::Conversion;
+    start_ui(&mut curr_page)?;
 
     Ok(())
 }
 
-fn start_ui() -> Result<(), io::Error> {
+fn start_ui(curr_page: &mut Pages) -> Result<(), io::Error> {
     enable_raw_mode()?;
     let mut stdout = io::stdout();
 
@@ -28,9 +29,9 @@ fn start_ui() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     
-    draw_init(&mut terminal)?;
+    draw_init(&mut terminal, &curr_page)?;
 
-    start_event_loop(&terminal)?;
+    start_event_loop(&mut terminal, curr_page)?;
 
     disable_raw_mode()?;
     execute!(
@@ -41,4 +42,27 @@ fn start_ui() -> Result<(), io::Error> {
     terminal.show_cursor()?;
 
     Ok(()) 
+}
+
+pub enum Pages {
+    Conversion,
+    Operations,
+    Binary,
+}
+
+impl Pages {
+    pub fn toggle(&mut self) {
+        use Pages::*;
+        match self {
+            Conversion => {
+                *self = Operations;
+            }, 
+            Operations => {
+                *self = Binary;
+            },
+            Binary => {
+                *self = Conversion;
+            },
+        };
+    }
 }
