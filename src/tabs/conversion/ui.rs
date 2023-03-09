@@ -1,14 +1,18 @@
 use std::io;
 use tui::{
-    widgets::{Block, Borders, Tabs, Paragraph, ListItem, List},
+    widgets::{Block, Borders, Paragraph, ListItem, List, BorderType},
     layout::{Layout, Constraint, Direction, Rect},
-    Frame, backend::Backend, text::{Spans, Span, Text}, style::{Style, Color, Modifier}, symbols::DOT
+    Frame, backend::Backend, style::{Style, Color, Modifier}
 };
 
-pub fn draw<B>(f: &mut Frame<B>, main_chunks: Vec<Rect>) -> Result<(), io::Error>
+use crate::ui::Layouts;
+
+pub fn draw<B>(f: &mut Frame<B>, main_chunks: Vec<Rect>) -> Result<Layouts, io::Error>
 where
     B: Backend,
 {
+    let layouts: Layouts;
+
     // Middle chunks: left for input, right for output
     let middle_chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -68,10 +72,8 @@ where
     f.render_widget(block_right, middle_chunks[1]);
 
     // Input widget
-    let mut input_string: String = String::from("");
-    let lines = Text::from((&input_string).as_str());
-    let p = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Input").border_type(tui::widgets::BorderType::Rounded)).style(Style::default().fg(Color::Green));
-    f.render_widget(p, left_chunks[0]);
+    let input_block = Block::default().borders(Borders::ALL).title("Input").border_type(BorderType::Rounded);
+    f.render_widget(input_block, left_chunks[0]);
 
     // Options for the number being converted
     let left_options = [
@@ -81,7 +83,7 @@ where
         ListItem::new("Hexadecimal"),
     ];
     let list = List::new(left_options)
-        .block(Block::default().title("From").borders(Borders::ALL))
+        .block(Block::default().title("From").borders(Borders::ALL).border_type(BorderType::Rounded))
         .style(Style::default().fg(Color::White))
         .highlight_style(Style::default().add_modifier(Modifier::ITALIC))
         .highlight_symbol(">>");
@@ -95,7 +97,7 @@ where
         ListItem::new("Hexadecimal"),
     ];
     let list = List::new(right_options)
-        .block(Block::default().title("To").borders(Borders::ALL))
+        .block(Block::default().title("To").borders(Borders::ALL).border_type(BorderType::Rounded))
         .style(Style::default().fg(Color::White))
         .highlight_style(Style::default().add_modifier(Modifier::ITALIC))
         .highlight_symbol(">>");
@@ -117,5 +119,6 @@ where
         .block(Block::default().borders(Borders::empty()));
     f.render_widget(ascii_arrow, arrow_chunks[1]);
 
-    Ok(())
+    layouts = Layouts { input: left_chunks[0] };
+    Ok(layouts)
 }

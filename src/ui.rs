@@ -1,15 +1,16 @@
 use std::io;
 use tui::{
-    widgets::{Block, Borders, Tabs, Paragraph, ListItem, List},
-    layout::{Layout, Constraint, Direction},
-    Frame, backend::Backend, text::{Spans, Span, Text}, style::{Style, Color, Modifier}, symbols::DOT, Terminal
+    widgets::{Block, Borders, Tabs},
+    layout::{Layout, Constraint, Direction, Rect},
+    backend::Backend, text::Spans, style::{Style, Color}, symbols::DOT, Terminal
 };
 use crate::{tabs::*, Pages};
 
-pub fn draw_init<B>(terminal: &mut Terminal<B>, curr_page: &Pages) -> Result<(), io::Error>
+pub fn draw_init<B>(terminal: &mut Terminal<B>, curr_page: &Pages) -> Result<Layouts, io::Error>
 where
     B: Backend,
 {
+    let mut layouts = Layouts { input: Rect::default() };
     terminal.draw(|f| {
         // Main chunks
         let chunks = Layout::default()
@@ -51,12 +52,21 @@ where
         f.render_widget(tabs, chunks[0]);
 
         // Here should be tab match statement(maybe)
-        match curr_page {
+       layouts = match curr_page {
             Pages::Conversion => conversion::ui::draw(f, chunks).expect("Couldn't draw conversion page"),
             Pages::Operations => operations::ui::draw(f, chunks).expect("Couldn't draw operations page"),
             Pages::Binary => binary::ui::draw(f, chunks).expect("Couldn't draw binary page"),
         };
     })?;
 
-    Ok(())
+    Ok(layouts)
+}
+
+pub enum _BlockState {
+    Focused,
+    Unfocused,
+}
+
+pub struct Layouts {
+    pub input: Rect,
 }

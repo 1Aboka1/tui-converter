@@ -6,7 +6,7 @@ pub enum Conversion {
 }
 
 impl Conversion {
-    pub fn convert(numbers: Conversion) {
+    pub fn convert(_numbers: Conversion) {
                      
     }
 }

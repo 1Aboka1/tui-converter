@@ -1,7 +1,7 @@
 mod ui;
 mod event;
 mod tabs;
-use std::{io, thread, time::Duration};
+use std::io;
 use event::start_event_loop;
 use tui::{
     backend::CrosstermBackend, 
@@ -29,9 +29,9 @@ fn start_ui(curr_page: &mut Pages) -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     
-    draw_init(&mut terminal, &curr_page)?;
+    let layouts = draw_init(&mut terminal, &curr_page)?;
 
-    start_event_loop(&mut terminal, curr_page)?;
+    start_event_loop(&mut terminal, curr_page, layouts)?;
 
     disable_raw_mode()?;
     execute!(
